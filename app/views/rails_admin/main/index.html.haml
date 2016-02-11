@@ -103,7 +103,7 @@
             %i.icon-white.icon-refresh
             = t("admin.misc.refresh")
           %button#remove_filter.btn.btn-info{title: "Reset filters"}
-            %i.icon-white.icon-remove  
+            %i.icon-white.icon-remove
       - if export_action
         %span{style: 'float:right'}= link_to wording_for(:link, export_action), export_path(params.except('set').except('page')), class: 'btn btn-info'
 
@@ -112,7 +112,12 @@
       - @model_config.list.scopes.each_with_index do |scope, index|
         - scope = '_all' if scope.nil?
         %li{class: "#{'active' if scope.to_s == params[:scope] || (params[:scope].blank? && index == 0)}"}
-          %a{href: index_path(params.merge(scope: scope, page: nil)), class: 'pjax'}= I18n.t("admin.scopes.#{@abstract_model.to_param}.#{scope}", default: I18n.t("admin.scopes.#{scope}", default: scope.to_s.titleize))
+          %a{href: index_path(params.merge(scope: scope, page: nil)), class: 'pjax'}
+            = I18n.t("admin.scopes.#{@abstract_model.to_param}.#{scope}", default: I18n.t("admin.scopes.#{scope}", default: scope.to_s.titleize))
+            - if scope != '_all'
+              = "(" + @model_config.abstract_model.scoped.instance_eval("#{scope}").count.to_s + ")"
+            - elsif scope == '_all'
+              = "(" + @model_config.abstract_model.scoped.count.to_s + ")"
 
   = form_tag bulk_action_path(model_name: @abstract_model.to_param), method: :post, id: "bulk_form", class: "form" do
     = hidden_field_tag :bulk_action
