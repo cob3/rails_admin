@@ -34,6 +34,7 @@ module RailsAdmin
         scope = scope.merge(auth_scope)
       end
       scope = scope.instance_eval(&additional_scope) if additional_scope
+      scope = scope.instance_eval(params[:scope]) if params[:scope].present? and params[:scope] != "_all"
 
       get_collection(model_config, scope, pagination)
     end
